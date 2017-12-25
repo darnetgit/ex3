@@ -4,7 +4,7 @@ author: "Dar Nettler & Carmela Davidovsky"
 date: "December 18, 2017"
 output: html_document
 ---
-
+Install relevant packages
 ```{r}
 install.packages("twitteR")
 install.packages("httr")
@@ -28,22 +28,34 @@ library(stringr)
 library(igraph)
 library(digest)
 library(rgl)
-
 ```
 
 ```{r}
-# start the authorisation process
+#start the authorisation process
 myapp = oauth_app("twitter", key="h055FoysHKU57ryKbIZvMVwaC", secret="7gbAzHv5dmeaVhOusLqQw9lm7MV8CznrUBZRd0fT0qw4UVbZbL")
 
-# sign using token and token secret
+#sign using token and token secret
 sig1 = sign_oauth1.0(myapp, token="2268807271-b0r3vOtx98FzXBSSXP4xSTcP0muQPkHE7j7JWFQ", token_secret="djF1urmuH1xQ7BUcOIXvcHEZzGyWQiuxxgdX9aKPWgCrp")
 ```
 
 ```{r}
+#set oauth
 sig <- setup_twitter_oauth("h055FoysHKU57ryKbIZvMVwaC", "7gbAzHv5dmeaVhOusLqQw9lm7MV8CznrUBZRd0fT0qw4UVbZbL", "2268807271-b0r3vOtx98FzXBSSXP4xSTcP0muQPkHE7j7JWFQ", "djF1urmuH1xQ7BUcOIXvcHEZzGyWQiuxxgdX9aKPWgCrp")
 ```
-```{r}
 
+
+Since we’re both regular watchers and fans of grey’s anatomy, we decided to continue with the theme of grey’s anatomy in this part of the assignment.
+
+Using twitter’s API we requested 1,500 tweets that include the hashtag “#GreysAnatomy”.
+Then, we extracted the hashtags from each tweet using the “stringr” package and regex in order to see what people are associating with the show  
+Our graph consist of the hashtags from the extracted tweets as vertices. Two vertices share an edge if both hashtags appeared in the same tweet
+
+For example: if the fallowing tweet was extracted:  
+**the hottest guys in #GreysAnatomy are #McDreamy #McSteamy #McVet**    
+the graph vertices will be: McDreamy, McSteamy and McVet  
+and the graph edges: McDreamy--McSteamy, McDreamy—McVet McSteamy--McVet
+
+```{r}
 
 res<-searchTwitter("#GreysAnatomy",n=1500, lang = "en")
 #res<-res2
@@ -76,17 +88,14 @@ for(i in 1:1500){
   hashtags<-c()
 }
 
-#create data fram
+#create data frame
 df<-data.frame(left,right)
 df<-df[!duplicated(df),]
 write.csv(df,file="1500.csv",row.names = FALSE)
     
 ```
-
+creating and displaying the graph
 ```{r}
-# df<-data.frame(left,right)
-# df<-df[!duplicated(df),]
-# write.csv(df,file="2000.csv",row.names = FALSE)
 readddd<-read.csv("1500.csv",header=T)
 graphy<-graph.data.frame(readddd,directed = F)
 #E(graphy)<-E(graphy) %>% unique()
