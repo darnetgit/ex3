@@ -108,6 +108,70 @@ plot(graphy, margin=-0.1)
 
 ```
 
+betweeness
 ```{r}
+which.max(betweenness(graphy, v=V(graphy), directed = FALSE, weights=NULL, nobigint = FALSE, normalized = FALSE))
+```
 
+closeness
+```{r}
+which.max(closeness(graphy, v=V(graphy), mode = c("out", "in", "all", "total"),
+  weights = NULL, normalized = FALSE))
+```
+
+eigenvector
+```{r}
+which.max(eigen_centrality(graphy)$vector)
+```
+
+_________________
+
+##Girvan-Newman community detection
+
+This is a divisive method that works on undirected unweighted networks. It is based on calculating for each edge its **edge betweeness-** the number of shortest path going through this edge.
+
+It then iteratively removes the edge with the highest betweeness score, until reaching some threshold.
+
+The remaining connected vertices are communities (clusters).
+```{r}
+gc <-  edge.betweenness.community(graphy)
+```
+
+```{r}
+#Store cluster ids for each vertex
+memb <- membership(gc)
+head(memb)
+```
+
+```{r}
+plot(graphy, vertex.size=5, #vertex.label=NA,
+     vertex.color=memb, asp=FALSE)
+```
+
+```{r}
+gc
+sizes(gc)
+```
+
+```{r}
+#modularity for each phase of the previous algorithm
+max(gc$modularity)
+```
+
+
+```{r}
+# Remove self-loops is exist
+graphy <- simplify(graphy)
+gc2 <-  fastgreedy.community(graphy)
+```
+
+```{r}
+plot(graphy,  vertex.size=5,
+     vertex.color=membership(gc2), asp=FALSE)
+```
+
+```{r}
+gc2
+sizes(gc2)
+max(gc2$modularity)
 ```
